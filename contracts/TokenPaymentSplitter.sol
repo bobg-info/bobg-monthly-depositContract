@@ -49,13 +49,12 @@ abstract contract TokenPaymentSplitter {
     
     // 現時点でClaim可能なトークンバランスを確認する
     function claimableAmount(address account) public view returns (uint256) {
+        require(block.timestamp >= releaseTime, "Still in lock-up period"); //ロックアップ期間中に引き出すことはできない
         uint256 tokenTotalReceived = IERC20Upgradeable(paymentToken).balanceOf(address(this)) + _totalTokenReleased; //Deposit Contractに送られた総トークン量
         uint256 totalAsset = (tokenTotalReceived * _shares[account]) / _totalShares; //アドレスに割り当てられた総トークン量
         uint256 vestingMonthsElapsed = (block.timestamp - releaseTime) / 60 / 60 / 24 / 30; //ベスティングの経過日数 ÷ 30日
         uint256 claimable; //claim可能なトークン量
-        if (releaseTime >= block.timestamp) {
-            claimable = 0;
-        } else if (vestingMonthsElapsed > vestingMonth) {
+        if (vestingMonthsElapsed > vestingMonth) {
             claimable =  totalAsset - _tokenReleased[account]; //ベスティング期間が終わった後にはclaimable amountが増加しない
         } else {
             claimable =  (totalAsset * vestingMonthsElapsed) / vestingMonth - _tokenReleased[account];
