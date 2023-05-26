@@ -4,7 +4,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "./TokenPaymentSplitter.sol";
 
-contract DepositContract is Initializable, OwnableUpgradeable, TokenPaymentSplitter {
+contract MonthlyDepositContract is Initializable, OwnableUpgradeable, TokenPaymentSplitter {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     function initialize(address newOwner, address[] memory _payees, uint256[] memory _shares,
